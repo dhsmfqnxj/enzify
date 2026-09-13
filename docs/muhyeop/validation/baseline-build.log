@@ -1,0 +1,402 @@
+make: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source'
+fatal: not a git repository (or any of the parent directories): .git
+  * If you experience any problems building Crawl, please take a second look
+  * at INSTALL.md: the solution to your problem just might be in there!
+util/art-data.pl
+    * rebuilding crawl: new build flags or prefix
+    PYTHON mon-data.h
+TRACK_CFLAGS = x86_64-linux-gnu-gcc x86_64-linux-gnu-g++ -O2 -pipe -Wall -Wformat-security -Wundef -Wextra -Wno-missing-field-initializers -Wno-implicit-fallthrough -Wno-type-limits -Wno-uninitialized -Wno-array-bounds -Wno-format-zero-length -Wmissing-declarations -Wredundant-decls -Wno-parentheses -Wwrite-strings -Wshadow -pedantic -Wuninitialized -Iutil -I. -isystem contrib/install/x86_64-linux-gnu/include -DWIZARD -DASSERTS -DCLUA_BINDINGS -isystem /usr/include/ncursesw #EOL
+    PYTHON species-data.h
+OLD_CFLAGS   =  #EOL
+    PYTHON job-data.h
+    Generating art-data.h
+    Generating art-enum.h
+    Generating dc-unrand.txt
+    Generating tiledef-unrand.cc
+    PYTHON form-data.h
+    PYTHON rltilesstatus-icon-sizes.h
+    GEN mi-enum.h
+    GEN cmd-name.h
+    COPY util/levcomp.tab.cc
+    COPY util/levcomp.tab.cc
+    COPY util/levcomp.lex.cc
+    GEN dat/dlua/tags.lua
+    GEN ../docs/FAQ.html
+    GEN ../docs/crawl_manual.txt
+    COPY ../docs/quickstart.txt
+    * Need to build contribs: lua/src sqlite
+make[1]: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib'
+    PYTHON config.h
+make[2]: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib/lua/src'
+    * rebuilding lua: new build flags or prefix
+    CC lapi.o
+    GEN job-groups.h
+    GEN aptitudes.h
+    GEN job-type.h
+    GEN ../docs/aptitudes.txt
+    GEN ../docs/aptitudes-wide.txt
+    CC lcode.o
+    GEN species-groups.h
+    CC lctype.o
+    CC ldebug.o
+    CC ldo.o
+    CC ldump.o
+    CC lfunc.o
+    CC lgc.o
+    CC llex.o
+    CC lmem.o
+make[2]: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib/sqlite'
+    * rebuilding sqlite: new build flags or prefix
+    CC sqlite3.o
+    GEN species-type.h
+    GEN mon-mst.h
+    CC lobject.o
+    CC lopcodes.o
+    CC lparser.o
+    CC lstate.o
+    CC lstring.o
+    CC ltable.o
+    CC ltm.o
+    CC lundump.o
+    CC lvm.o
+    CC lzio.o
+    CC lauxlib.o
+    CC lbaselib.o
+    CC lcorolib.o
+    CC ldblib.o
+    CC liolib.o
+    CC lmathlib.o
+    CC loadlib.o
+    CC loslib.o
+    CC lstrlib.o
+    CC ltablib.o
+    CC lutf8lib.o
+    CC linit.o
+    AR liblua.a
+ar: `u' modifier ignored since `D' is the default (see `U')
+    RANLIB liblua.a
+make[2]: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib/lua/src'
+make[2]: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib/lua/src'
+    INSTALL lua.h
+    INSTALL luaconf.h
+    INSTALL lualib.h
+    INSTALL lauxlib.h
+    INSTALL liblua.a
+make[2]: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib/lua/src'
+    AR libsqlite3.a
+ar: `u' modifier ignored since `D' is the default (see `U')
+    RANLIB libsqlite3.a
+make[2]: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib/sqlite'
+make[2]: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib/sqlite'
+    INSTALL sqlite3.h
+    INSTALL libsqlite3.a
+make[2]: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib/sqlite'
+make[1]: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/contrib'
+make -C rltiles all ARCH=x86_64-linux-gnu NO_PKGCONFIG=YesPlease TILES=
+make[1]: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/rltiles'
+    * rebuilding tilegen: new build flags or prefix
+    HOSTCXX tool/tile_colour.o
+    HOSTCXX tool/tile_page.o
+    HOSTCXX tool/tile.o
+    HOSTCXX tool/tile_list_processor.o
+    HOSTCXX tool/main.o
+    HOSTLINK tool/tilegen.elf
+    GEN tiledef-main.h
+    GEN tiledef-dngn.h
+    GEN tiledef-floor.h
+    GEN tiledef-wall.h
+    GEN tiledef-feat.h
+    GEN tiledef-player.h
+    GEN tiledef-gui.h
+    GEN tiledef-icons.h
+make[1]: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/rltiles'
+    CXX ability.o
+    CXX abyss.o
+    CXX acquire.o
+    CXX act-iter.o
+    CXX actor-los.o
+    CXX actor.o
+    CXX adjust.o
+    CXX areas.o
+    CXX arena.o
+    CXX artefact.o
+    CXX attack.o
+    CXX attitude-change.o
+    CXX beam.o
+    CXX behold.o
+    CXX bitary.o
+    CXX branch.o
+    CXX branch-data-json.o
+    CXX bloodspatter.o
+    CXX chardump.o
+    CXX cio.o
+    CXX cloud.o
+    CXX clua.o
+    CXX cluautil.o
+    CXX colour.o
+    CXX command.o
+    CXX coord.o
+    CXX coord-circle.o
+    CXX coordit.o
+    CXX corpse.o
+    CXX crash.o
+    CXX ctest.o
+    CXX dactions.o
+    CXX database.o
+    CXX dbg-asrt.o
+    CXX dbg-maps.o
+    CXX dbg-objstat.o
+    CXX dbg-scan.o
+    CXX dbg-util.o
+    CXX death-curse.o
+    CXX decks.o
+    CXX delay.o
+    CXX describe.o
+    CXX describe-god.o
+    CXX describe-spells.o
+    CXX dgl-message.o
+    CXX dgn-delve.o
+    CXX dgn-height.o
+    CXX dgn-irregular-box.o
+    CXX dgn-layouts.o
+    CXX dgn-overview.o
+    CXX dgn-proclayouts.o
+    CXX dgn-shoals.o
+    CXX dgn-swamp.o
+    CXX dgn-event.o
+    CXX directn.o
+    CXX dlua.o
+    CXX domino.o
+    CXX dungeon.o
+    CXX end.o
+    CXX english.o
+    CXX errors.o
+    CXX evoke.o
+    CXX exclude.o
+    CXX exercise.o
+    CXX fearmonger.o
+    CXX feature.o
+    CXX fight.o
+    CXX files.o
+    CXX fineff.o
+    CXX format.o
+fineff.cc: In member function ‘virtual bool delayed_action_fineff::mergeable(const final_effect&) const’:
+fineff.cc:288:40: warning: unused parameter ‘a’ [-Wunused-parameter]
+  288 |     bool mergeable(const final_effect& a) const override { return false; };
+      |                    ~~~~~~~~~~~~~~~~~~~~^
+    CXX fprop.o
+    CXX game-options.o
+    CXX geom2d.o
+    CXX ghost.o
+    CXX god-abil.o
+    CXX god-blessing.o
+    CXX god-companions.o
+    CXX god-conduct.o
+    CXX god-item.o
+    CXX god-menu.o
+    CXX god-passive.o
+    CXX god-prayer.o
+    CXX god-wrath.o
+    CXX hash.o
+    CXX hints.o
+    CXX hiscores.o
+    CXX initfile.o
+    CXX invent.o
+    CXX item-use.o
+    CXX item-name.o
+    CXX item-prop.o
+    CXX items.o
+    CXX jobs.o
+    CXX json.o
+    CXX kills.o
+    CXX known-items.o
+    CXX l-colour.o
+    CXX l-crawl.o
+    CXX l-debug.o
+    CXX l-dgn.o
+    CXX l-dgnbld.o
+    CXX l-dgnevt.o
+    CXX l-dgngrd.o
+    CXX l-dgnit.o
+    CXX l-dgnlvl.o
+    CXX l-dgnmon.o
+    CXX l-dgntil.o
+    CXX l-feat.o
+    CXX l-file.o
+    CXX l-global.o
+    CXX l-item.o
+    CXX l-los.o
+    CXX l-mapgrd.o
+    CXX l-mapmrk.o
+    CXX l-moninf.o
+    CXX l-mons.o
+    CXX l-option.o
+    CXX l-spells.o
+    CXX l-subvault.o
+    CXX l-travel.o
+    CXX l-view.o
+    CXX l-wiz.o
+    CXX l-you.o
+    CXX lang-fake.o
+    CXX lev-pand.o
+    CXX libutil.o
+    CXX loading-screen.o
+    CXX lookup-help.o
+    CXX los.o
+    CXX los-def.o
+    CXX losglobal.o
+    CXX losparam.o
+    CXX luaterp.o
+    CXX macro.o
+    CXX makeitem.o
+    CXX map-knowledge.o
+    CXX mapdef.o
+    CXX mapmark.o
+    CXX maps.o
+    CXX maybe-bool.o
+    CXX melee-attack.o
+    CXX menu.o
+    CXX message-stream.o
+    CXX message.o
+    CXX misc.o
+    CXX mon-abil.o
+    CXX mon-act.o
+    CXX mon-aura.o
+    CXX mon-behv.o
+    CXX mon-cast.o
+    CXX mon-clone.o
+    CXX mon-death.o
+    CXX mon-ench.o
+    CXX mon-explode.o
+    CXX mon-gear.o
+    CXX mon-info.o
+    CXX mon-movetarget.o
+    CXX mon-pathfind.o
+    CXX mon-pick.o
+    CXX mon-place.o
+    CXX mon-poly.o
+    CXX mon-project.o
+    CXX mon-speak.o
+    CXX mon-tentacle.o
+    CXX mon-transit.o
+    CXX mon-util.o
+    CXX monster.o
+    CXX movement.o
+    CXX mutation.o
+    CXX nearby-danger.o
+    CXX newgame.o
+    CXX ng-init.o
+    CXX ng-init-branches.o
+    CXX ng-input.o
+    CXX ng-restr.o
+    CXX ng-setup.o
+    CXX ng-wanderer.o
+    CXX notes.o
+    CXX orb.o
+    CXX ouch.o
+    CXX outer-menu.o
+    CXX output.o
+    CXX package.o
+    CXX pattern.o
+    CXX pcg.o
+    CXX perlin.o
+    CXX piety-info.o
+    CXX place-info.o
+    CXX place.o
+    CXX playable.o
+    CXX player-act.o
+    CXX player-equip.o
+    CXX player-notices.o
+    CXX player-reacts.o
+    CXX player-stats.o
+player-reacts.cc: In function ‘void _regenerate_hp_and_mp(int)’:
+player-reacts.cc:1209:15: warning: unused variable ‘old_hp’ [-Wunused-variable]
+ 1209 |     const int old_hp = you.hp;
+      |               ^~~~~~
+player-reacts.cc:1210:15: warning: unused variable ‘old_mp’ [-Wunused-variable]
+ 1210 |     const int old_mp = you.magic_points;
+      |               ^~~~~~
+    CXX player.o
+    CXX potion.o
+    CXX precision-menu.o
+    CXX prompt.o
+    CXX quiver.o
+    CXX randbook.o
+    CXX random.o
+    CXX random-var.o
+    CXX ranged-attack.o
+    CXX ray.o
+    CXX religion.o
+    CXX scroller.o
+    CXX shopping.o
+    CXX shout.o
+    CXX show.o
+    CXX showsymb.o
+    CXX skill-menu.o
+    CXX skills.o
+    CXX sound.o
+    CXX species.o
+    CXX spl-book.o
+    CXX spl-cast.o
+    CXX spl-clouds.o
+    CXX spl-damage.o
+    CXX spl-goditem.o
+    CXX spl-miscast.o
+    CXX spl-monench.o
+    CXX spl-other.o
+    CXX spl-selfench.o
+    CXX spl-summoning.o
+    CXX spl-transloc.o
+    CXX spl-util.o
+    CXX spl-vortex.o
+    CXX spl-zap.o
+    CXX sprint.o
+    CXX sqldbm.o
+    CXX stairs.o
+    CXX startup.o
+    CXX stash.o
+    CXX state.o
+    CXX status.o
+    CXX stepdown.o
+    CXX store.o
+    CXX stringutil.o
+    CXX syscalls.o
+    CXX tags.o
+    CXX target.o
+    CXX target-compass.o
+    CXX teleport.o
+    CXX terrain.o
+    CXX throw.o
+    CXX timed-effects.o
+    CXX transform.o
+    CXX traps.o
+    CXX travel.o
+    CXX tutorial.o
+    CXX ui.o
+    CXX uncancel.o
+    CXX unicode.o
+    CXX view.o
+    CXX viewchar.o
+    CXX viewgeom.o
+    CXX viewmap.o
+    CXX wcwidth.o
+    CXX wiz-dgn.o
+    CXX wiz-dump.o
+    CXX wiz-fsim.o
+    CXX wiz-item.o
+    CXX wiz-mon.o
+    CXX wiz-you.o
+    CXX wizard.o
+    CXX worley.o
+    CXX xom.o
+    CXX tilepick.o
+    CXX tileview.o
+    CXX zot.o
+    CXX libunix.o
+libunix.cc:30:10: fatal error: term.h: No such file or directory
+   30 | #include <term.h>
+      |          ^~~~~~~~
+compilation terminated.
+make: *** [Makefile:1802: libunix.o] Error 1
+make: *** Waiting for unfinished jobs....
+make: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source'

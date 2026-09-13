@@ -1,0 +1,50 @@
+{
+  "checkpoint": 12,
+  "stage": "P0 foundation plus shared weapon-delay core; NOT a playable Muhyeop game",
+  "input_archive": "stone_soup-0.34.1.tar.xz",
+  "input_sha256": "473b9cdc16be0b537ac11e43c6c77db4b290000e4a17f72a842eba59c6b7be2a",
+  "source_version_file": "source/util/release_ver = 0.34.1",
+  "changed": {
+    "source/Makefile.obj": {
+      "before": "3c6f95e2efd1f8eab920fe275bec876db9845ad1a732d14ff9e1f309979a13de",
+      "after": "10dc3f3bea50fa694bcd4798de31b893a3e1bf787a4cde255cf43df9c38701c3"
+    },
+    "source/player-act.cc": {
+      "before": "eea386f40fedfee188fd65f29a9051a981a0039014995def36f582f300ee8540",
+      "after": "4d4c0cb00a79741ae720534d5fbe173e720f7f7d3377c22538db47a89f6aab14"
+    }
+  },
+  "added": {
+    "source/mercenary.h": "f7c446368c26f67ff61121f7f01dc08d8dab371c484936e9637021226d0fd6bf",
+    "source/mercenary.cc": "c5d39d8a718b8457db8f3bc6f58b3832f1c669e7d2c879addeed3d9d85713b77",
+    "source/attack-delay.h": "0ff43f192ff409fb5b3186ab1a63b59a5016498646bd0af99aeae58d3d4d9f53",
+    "source/attack-delay.cc": "70e670bdb88393a3e2cd39c147b893ffdd41304a0645e740e0ea23c0cabd851d",
+    "source/catch2-tests/test_mercenary.cc": "04ad24bcfb5186700868803472f1ee89696f46bef8eeb145a84ddb37b9e58109",
+    "source/catch2-tests/test_mercenary_record.cc": "cfe5253a4372e32a313689463f6222ef80543c74fbf8f52276d92481c44ef469",
+    "source/catch2-tests/test_attack-delay.cc": "5e014d14defa0617c0e642a577a378eb2e89820a9fd2147e45ef6e7b9895a666",
+    "source/util/test-muhyeop-core.sh": "3f8fd11ab43d8e897862b43bc55c9c902942205d528fedfed494fb40d97f96ab"
+  },
+  "source_evidence_sha256": {
+    "source/Makefile.obj": "3c6f95e2efd1f8eab920fe275bec876db9845ad1a732d14ff9e1f309979a13de",
+    "source/player-act.cc": "eea386f40fedfee188fd65f29a9051a981a0039014995def36f582f300ee8540",
+    "source/monster.cc": "b940910d464d53597b42cf271735bd8017da46419d7c74f3b4f52093323bc3c2",
+    "source/mon-place.cc": "358e61e704894a8c2e98af43f83bff225fb155e31a10265c7a69774d52e41c08",
+    "source/mgen-data.h": "e1929d4dc8827bbbe88b32e11d360abaf826280d75842327767d0a288bdbef91",
+    "source/mon-place.h": "5cadaa58d69e455fb399cb0076799373acb1a932487ee0f22dfd9ffd3ac4db99",
+    "source/tags.cc": "e09344d8d307903c5256e58d46ed54397c50ecd4a126523434cca8219e8d009c",
+    "source/fight.cc": "1a41571210aec23eafe5aa08f951fc2255391345bb34643e3af3cda393425cb7",
+    "source/attack.cc": "f086af3b9d2631bcd073cad4270e95bd178b8358a38b88416ad585058836f379",
+    "source/melee-attack.cc": "94cf527e67adcd1502e56a67cf07cf99ca86d26af166aac1768ad375b6f046d8",
+    "source/tag-version.h": "89a8f01703519a8d84eef31f376c7faca3467f5d93003efbbb71378e11ee2906"
+  },
+  "validation": {
+    "changed_translation_units": "PASS: native make rules with ASSERTS",
+    "focused_tests": "PASS: 4 cases / 373737 assertions",
+    "delay_input_combinations": 95121,
+    "shell_integration_test": "COMPILED ONLY; not executed",
+    "full_game_build": "BLOCKED: upstream libunix.cc missing term.h",
+    "full_catch2_suite": "NOT RUN",
+    "save_load_regression": "NOT RUN",
+    "gameplay_mercenary_spawn": "NOT IMPLEMENTED"
+  }
+}

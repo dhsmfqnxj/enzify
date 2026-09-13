@@ -1,0 +1,12 @@
+make: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source'
+fatal: not a git repository (or any of the parent directories): .git
+    GEN species-type.h
+make -C rltiles all ARCH=x86_64-linux-gnu NO_PKGCONFIG=YesPlease TILES=
+    GEN job-type.h
+    PYTHON rltilesstatus-icon-sizes.h
+make[1]: Entering directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/rltiles'
+make[1]: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source/rltiles'
+make: 'attack-delay.o' is up to date.
+make: 'player-act.o' is up to date.
+    CXX mercenary.o
+make: Leaving directory '/workspace/scratch/e3475e45cb96/stone_soup-0.34.1/source'
