@@ -344,6 +344,7 @@ enum tag_minor_version
     TAG_MINOR_PIETY_LOGGING,       // Log piety events
     TAG_MINOR_MONINFO_CLEANUP,     // Stop marshalling some unused info and start marshalling some overlooked info
 #endif
+    TAG_MINOR_MUHYEOP_ROSTER,     // Muhyeop world-owned mercenary records
     NUM_TAG_MINORS,
     TAG_MINOR_VERSION = NUM_TAG_MINORS - 1
 };

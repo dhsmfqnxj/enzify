@@ -9,6 +9,17 @@
 
 const char MUHYEOP_MERC_ID_KEY[] = "muhyeop_merc_id";
 
+MercenaryRoster &mercenary_roster()
+{
+    static MercenaryRoster roster;
+    return roster;
+}
+
+void reset_mercenaries_for_new_game()
+{
+    mercenary_roster() = MercenaryRoster();
+}
+
 MercenaryRecord::MercenaryRecord(merc_id_t record_id, const std::string &record_name,
                                  species_type record_species, job_type record_background,
                                  int strength, int intelligence, int dexterity)

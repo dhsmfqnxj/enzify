@@ -12,6 +12,7 @@
 */
 
 #include "AppHdr.h"
+#include "mercenary.h"
 
 #include "feature.h"
 #include "mpr.h"
@@ -1316,6 +1317,8 @@ void tag_write(tag_type tagID, writer &outf)
         _tag_construct_lost_monsters(th);
         CANARY;
         _tag_construct_companions(th);
+        CANARY;
+        mercenary_roster().save(th);
         break;
     case TAG_LEVEL:
         _tag_construct_level(th);
@@ -1525,6 +1528,14 @@ void tag_read(reader &inf, tag_type tag_id)
         if (th.getMinorVersion() >= TAG_MINOR_COMPANION_LIST)
 #endif
         _tag_read_companions(th);
+
+#if TAG_MAJOR_VERSION == 34
+        if (th.getMinorVersion() >= TAG_MINOR_MUHYEOP_ROSTER)
+#endif
+        {
+            EAT_CANARY;
+        }
+        read_mercenaries(th);
 
         // If somebody SIGHUP'ed out of the skill menu with every skill
         // disabled. Doing this here rather in _tag_read_you() because
