@@ -25,3 +25,17 @@
 3. P1 one-active-shell, spawn rollback, despawn/respawn 및 saved deployment 처리.
 4. 실제 장비 ownership+serializer, XL/skill accessor, P2/P3 전투 연결.
 원본 player/ordinary monster 경로를 섞지 않는다. you swap 금지.
+
+
+## 2026-09-14 복구 완료 기록 (위 대기 상태를 대체)
+
+- 원격 PR #1은 open/draft, main 미병합. 코드 SHA: 87158f6d4303fec2daff71a448d91f4b03f85413.
+- Actions 34758331299 성공. 전체 빌드 및 Catch2 76 cases / 383522 assertions 성공.
+- 복구 Git checkout: enzify-resume, branch codex/checkpoint13-roster-save.
+- 복구 직후 git status clean. 기존 stone_soup-0.34.1 폴더는 그대로 보존.
+- 비교 내역: recovery-comparison-2026-09-14.json. 일반 파일 내용은 줄바꿈 제외 일치.
+- 마지막 완료: Checkpoint13 원격 검사 확정 + P1 생성 순서/rollback 원본 함수 조사.
+- 최신 조사: spec-checkpoint13.md 마지막 “Checkpoint13 재개 검증 및 P1 생성 경로 검토”.
+- 다음: define_monster 하위 호출의 accessor/초기화 확인 → ID 삽입 위치 확정.
+  그 뒤 실제 장비/HP/배치 수명을 포함한 P1 구현. 아직 live spawn 구현 완료가 아니다.
+- 기존 수정본에 패치를 중복 적용하거나 압축 해제본으로 checkout을 덮어쓰지 않는다.

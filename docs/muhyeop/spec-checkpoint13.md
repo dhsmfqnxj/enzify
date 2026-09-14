@@ -6922,3 +6922,54 @@ P1 spawn은 아직 활성화하지 않는다. create_monster→mons_place→plac
 그다음 Record 실제 장비 ownership/item marshalling, XL mirror/실제 skill/accessor,
 player-like 평타/방어/저항 분기를 차례로 구현한다.
 Town/Tower/무공/세대 계승의 실제 플레이 기능은 아직 미구현이다.
+
+
+## Checkpoint13 재개 검증 및 P1 생성 경로 검토 — 2026-09-14
+
+검증 대상 코드: `87158f6d4303fec2daff71a448d91f4b03f85413`.
+Actions run 34758331299 / job 103726535268: Linux console 전체 빌드와
+전체 Catch2 성공. 실제 로그: `All tests passed (383522 assertions in 76 test cases)`.
+https://github.com/dhsmfqnxj/enzify/actions/runs/34758331299
+이는 위의 원격 검사 대기 기록을 대체한다. 실플레이 save/load 검증을 대신하지 않는다.
+
+기존 압축 해제 작업 폴더를 수정하지 않고 별도 Git checkout을 복구했다.
+비교 가능한 tracked 파일의 실질 내용 차이는 0개, CRLF/LF 차이는 483개다.
+원격에만 있는 README.md와 workflow 2개, 별도 취급한 framework 경로 26개는
+`recovery-comparison-2026-09-14.json`에 기록했다. 전체 파일 완전 일치라고 해석하지 않는다.
+
+### 원본 함수별 연결 위치
+
+다음 행 번호는 위 코드 SHA 기준이며, 아래는 조사/패치 설계이지 구현 완료가 아니다.
+
+| 파일 / 함수 | 확인된 원본 동작 | P1 구현 조건 |
+|---|---|---|
+| mon-place.cc:3163 create_monster | 위치를 재탐색할 수 있고 mons_place를 호출 | 호출 전 Record 존재·ALIVE·배치 자격·중복 검사. 실제 반환 위치를 검증 |
+| mon-place.cc:2909 mons_place | 랜덤 타입 및 BEH_COPY 처리 후 place_monster | 용병은 구체적인 shell 타입과 명시적 태도로 진입 |
+| mon-place.cc:628 place_monster | 몬스터 수/점유 검사, 타입 결정, 본체 생성 후 band 처리 | random/band/unique 특수 생성 경로를 용병 일반 생성에 허용하지 않음 |
+| mon-place.cc:832 get_free_monster | 빈 슬롯을 reset하고 반환 | 기존 shell/Record를 삭제해서 슬롯을 확보하지 않음 |
+| mon-place.cc:899 _place_monster_aux | 위치 및 arena 검사 뒤 966에서 MID 등록, 1018에서 define_monster | Record 검증은 MID 등록보다 앞. ID 부착은 reset 이후이며 accessor 진입보다 앞이어야 함 |
+| mon-place.cc:1204–1248 장비 분기 | give_item/give_weapon/wield_melee_weapon 실행 | 용병의 Record 장비 소유권 경로가 준비되기 전에는 플레이용 spawn을 노출하지 않음 |
+| mon-place.cc:1307 move_to | 태도 설정 후 grid 배치. 실패 시 MID 제거 및 reset | 용병 rollback은 장비 소유권도 명시적으로 정리해야 함 |
+| mon-place.cc:1551 behaviour_event | create_monster 반환 전에 ME_EVAL, 이후 autofoe/announcement | 성공 반환 후에만 ID를 붙이는 설계는 너무 늦음 |
+| monster.cc:129 monster::reset | inv 인덱스 초기화, grid 제거, props 초기화 | MID cache 삭제와 실제 item 소유권 처리를 reset만으로 대체할 수 없음 |
+| monster.cc:4755 destroy_inventory | 소유 아이템을 destroy_item으로 파괴 | Record 소유의 실제 장비를 공유한 채 호출하면 안 됨 |
+
+### 연결 방식 결정과 아직 남은 검증
+
+- create_monster 반환 후 ID 부착은 채택하지 않는다. 일반 생성 내부에 용병 전용 준비
+  단계를 두고, 첫 용병 accessor/장비 처리 이전에 유효한 연결이 보이도록 해야 한다.
+- `mgen_data.props`는 전체가 자동 복사되지 않는다. `MUHYEOP_MERC_ID_KEY`를
+  전달하더라도 명시적으로 검증하고 부착하는 코드가 필요하다.
+- 최초 후보는 `_place_monster_aux`의 위치 검증 이후부터 define_monster 전후 구간이다.
+  define_monster 및 그 하위 함수의 accessor/초기화 부작용 검토가 남아 있어
+  최종 삽입 행은 아직 확정하지 않는다. 이를 확정한 것처럼 live spawn을 추가하지 않는다.
+- spawn 전후 중복 검사는 모두 필요하다. 현재 층 검색만으로 다른 층 저장 shell,
+  transit, companions까지 포함한 전역 유일성을 보장할 수 없다.
+- 실패 복구는 이번 시도에서 만든 shell만 대상으로 한다. 기존 shell/Record는 보존한다.
+  아이템 소유권, MID cache, grid, props를 순서대로 정리하고 Record 상태는 바꾸지 않는다.
+  monster_die를 취소 처리로 재사용하지 않는다.
+- 실제 소환 노출 전 필수 검사: 중복 요청, 점유/부적합 위치, 슬롯 소진,
+  생성 중 실패, 초기 행동 시 유효 ID, 저장 후 재배치, 타 층/transit 중복 방지.
+
+다음 착수점: define_monster의 하위 호출을 추적해 ID 삽입점을 확정하고,
+장비/HP/배치 수명과 함께 P1을 구현한다. 이번 재개에서는 runtime 소스를 변경하지 않았다.
