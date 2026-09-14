@@ -69,3 +69,15 @@
 - 전체 엔진 테스트 실행은 이 최신 커밋의 Actions에서 확인해야 한다.
 - 실제 spawn이 노출되기 전, 오류가 gameplay 도중 발생하지 않도록 생성/불러오기
   경계에서 identity를 검증하고 실패 처리를 연결해야 한다. 현재 완성 플레이 기능이 아니다.
+
+
+## 설계 원문 400절 대조 — 용병 get_hit_dice 보완
+
+- design-2916.md 400절은 get_experience_level과 get_hit_dice 모두 Record XL 그대로 반환하도록 확정했다.
+- mon-act.cc의 get_hit_dice에 용병 전용 조기 반환을 추가했다.
+- 지난 패치의 “용병에도 기존 임시 enchantment HD 보정 적용”은 미완료 중간 상태였으며 이 절로 대체한다.
+- 일반 monster는 기존 drained/wretched/tempered 보정 유지.
+- 회귀 테스트: 각 보정의 일반 monster 예상값, 용병 XL 직접 조회, XL 변경,
+  잘못된 ID 거부, marker 제거 후 원본 계산 복귀. 생산 소스 및 테스트 C++14 ASSERTS 컴파일 성공.
+- 최신 전체 Actions 결과는 아직 미확인. 이전 실행 대기와 최신 결과를 혼동하지 않는다.
+- raw HD mirror 동기화, 실제 배치/해제, 장비/HP 수명은 여전히 후속 작업이다.

@@ -150,3 +150,33 @@ TEST_CASE_METHOD(MercenaryLevelFixture, "Broken mercenary level never falls back
     record.xl = 0;
     REQUIRE_THROWS_AS(shell.get_experience_level(), std::logic_error);
 }
+
+
+TEST_CASE_METHOD(MercenaryLevelFixture, "Mercenary HD bypasses ordinary monster level modifiers",
+                 "[muhyeop][mercenary]")
+{
+    auto &record = mercenary_roster().create("HD", SP_HUMAN, JOB_FIGHTER, 10, 10, 10);
+    record.xl = 17;
+    const enchant_type effects[] = {ENCH_DRAINED, ENCH_WRETCHED, ENCH_TEMPERED};
+    const int ordinary_hd[] = {10, 9, 16};
+    for (int i = 0; i < 3; ++i)
+    {
+        monster shell;
+        shell.set_hit_dice(12);
+        // Install consistent serialized enchantment state, without running
+        // unrelated application effects on an unplaced test monster.
+        shell.enchantments[effects[i]] = mon_enchant(effects[i], nullptr, 100, 2);
+        shell.ench_cache.set(effects[i]);
+        REQUIRE(shell.get_hit_dice() == ordinary_hd[i]);
+        shell.props[MUHYEOP_MERC_ID_KEY] = int(record.id);
+        REQUIRE(shell.get_experience_level() == 17);
+        REQUIRE(shell.get_hit_dice() == 17);
+        record.xl = 18;
+        REQUIRE(shell.get_hit_dice() == 18);
+        record.xl = 17;
+        shell.props[MUHYEOP_MERC_ID_KEY] = 999;
+        REQUIRE_THROWS_AS(shell.get_hit_dice(), std::logic_error);
+        shell.props.erase(MUHYEOP_MERC_ID_KEY);
+        REQUIRE(shell.get_hit_dice() == ordinary_hd[i]);
+    }
+}

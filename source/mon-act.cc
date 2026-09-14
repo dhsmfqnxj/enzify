@@ -87,6 +87,10 @@ static bool _do_move_monster(monster& mons, const coord_def& delta);
  */
 int monster::get_hit_dice() const
 {
+    // Mercenary HD is only an engine compatibility view of Record XL.
+    if (is_mercenary_monster(*this))
+        return get_experience_level();
+
     const int base_hd = get_experience_level();
 
     const mon_enchant drain_ench = get_ench(ENCH_DRAINED);
