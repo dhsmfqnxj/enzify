@@ -39,3 +39,16 @@
 - 다음: define_monster 하위 호출의 accessor/초기화 확인 → ID 삽입 위치 확정.
   그 뒤 실제 장비/HP/배치 수명을 포함한 P1 구현. 아직 live spawn 구현 완료가 아니다.
 - 기존 수정본에 패치를 중복 적용하거나 압축 해제본으로 checkout을 덮어쓰지 않는다.
+
+
+## P1 준비 코드 — 용병 shell 중복 탐지
+
+- source/mercenary.h/.cc: find_mercenary_shell(slots, count, id) 추가.
+- 지정된 슬롯 범위에서 ABSENT/UNIQUE/DUPLICATE를 구분. 중복이면 포인터를 반환하지 않음.
+- HP가 0이어도 할당된 shell은 계산한다. 빈 슬롯, 다른 ID, 문자열 ID는 일치로 계산하지 않는다.
+- 읽기 전용이며 shell/Record를 변경하지 않는다. 잘못된 검색 인자는 invalid_argument.
+- 현재 층/지정 범위 검사 기반 함수이며 transit 및 다른 층을 포함한 전역 중복 보장은 아직 아니다.
+- 실제 spawn 호출부에는 아직 연결하지 않았다. 다음 단계는 전역 배치 수명 및 생성 전후 검사 연결.
+- Catch2 회귀 테스트 2개 추가: DOWNED/중복 보존/reset 이후 검색, 잘못된 입력/무관 슬롯.
+- 변경 production/test translation unit C++14+ASSERTS 컴파일 성공.
+  전체 실행 검사는 이 코드 커밋의 Actions 결과를 확인할 것. 기존 76개 통과는 이전 코드 결과다.

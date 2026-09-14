@@ -106,3 +106,16 @@ extern const char MUHYEOP_MERC_ID_KEY[];
 bool is_mercenary_monster(const monster &mon);
 MercenaryLink lookup_mercenary(const monster &mon,
                                const MercenaryRoster &roster);
+
+
+// Inspect a supplied level's allocated slots, including HP-zero/DOWNED shells.
+// This does not inspect unloaded levels or transit and must not be used as a
+// world-wide deployment registry. Duplicate identities never choose a winner.
+enum class mercenary_shell_status { ABSENT, UNIQUE, DUPLICATE };
+struct MercenaryShellSearch
+{
+    mercenary_shell_status status;
+    const monster *shell;
+};
+MercenaryShellSearch find_mercenary_shell(const monster *slots,
+                                        std::size_t count, merc_id_t id);

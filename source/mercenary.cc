@@ -95,3 +95,28 @@ MercenaryLink lookup_mercenary(const monster &mon,
     return {record ? mercenary_link_status::LINKED
                    : mercenary_link_status::MISSING_RECORD, record};
 }
+
+
+MercenaryShellSearch find_mercenary_shell(const monster *slots,
+                                        std::size_t count, merc_id_t id)
+{
+    if (id <= 0 || (!slots && count))
+        throw std::invalid_argument("invalid mercenary shell search");
+
+    const monster *found = nullptr;
+    for (std::size_t i = 0; i < count; ++i)
+    {
+        const monster &mon = slots[i];
+        // alive() would exclude a DOWNED shell that still occupies a slot.
+        if (mon.type == MONS_NO_MONSTER || !is_mercenary_monster(mon))
+            continue;
+        const auto &value = mon.props[MUHYEOP_MERC_ID_KEY];
+        if (value.get_type() != SV_INT || value.get_int() != id)
+            continue;
+        if (found)
+            return {mercenary_shell_status::DUPLICATE, nullptr};
+        found = &mon;
+    }
+    return {found ? mercenary_shell_status::UNIQUE
+                  : mercenary_shell_status::ABSENT, found};
+}
