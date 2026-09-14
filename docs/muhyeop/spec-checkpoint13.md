@@ -7015,3 +7015,27 @@ https://github.com/dhsmfqnxj/enzify/actions/runs/34758331299
   잘못된 ID 거부, marker 제거 후 원본 계산 복귀. 생산 소스 및 테스트 C++14 ASSERTS 컴파일 성공.
 - 최신 전체 Actions 결과는 아직 미확인. 이전 실행 대기와 최신 결과를 혼동하지 않는다.
 - raw HD mirror 동기화, 실제 배치/해제, 장비/HP 수명은 여전히 후속 작업이다.
+
+
+## P1 준비 — 검증 후 shell ID/HD 연결
+
+이전 코드 51935739aceb46d41c247a8acb6ba04662a38105 검증 완료:
+Actions 34792860642 / job 103820292669, 전체 Linux 빌드 성공,
+Catch2 81 cases / 383566 assertions 성공.
+https://github.com/dhsmfqnxj/enzify/actions/runs/34792860642
+
+이번 추가: source/mercenary.h/.cc bind_mercenary_shell.
+- 준비된 슬롯 범위와 대상 인덱스, Record를 받아 연결 상태를 반환한다.
+- 빈/잘못된 슬롯, 없는/잘못된 Record, ALIVE 아닌 상태, 기존 marker,
+  같은 ID의 기존 shell, 남아 있는 monster inventory를 거부한다.
+- 정상 검증 후에만 merc_id를 부착하고 raw HD를 Record XL로 설정한다.
+- 검증 실패에서 Record/기존 shell/아이템을 삭제하거나 변경하지 않는다.
+- 테스트: 실패별 기존 상태 보존, 중복 거부, 인벤토리 비소유 처리,
+  정상 연결, 중복 호출 거부, marker 제거 후 raw HD 미러 확인.
+- 생산 및 테스트 소스 C++14 ASSERTS 컴파일 성공. 새 코드 전체 실행 검사는 대기.
+
+이것은 생성 함수 내부에서 사용할 준비 함수이며 아직 호출 경로에 연결하지 않았다.
+현재 범위 중복만 검사하므로 world-wide deployment/transit 검증을 대체하지 않는다.
+호출자는 원본 define_monster 등 초기화를 마친 뒤, 장비/행동 처리 전에 실행해야 한다.
+메모리 할당 예외까지 포함한 전체 spawn transaction, 실제 장비/HP 수명 및 레벨업 시
+HD 갱신은 후속 구현이며, 지금 플레이 가능한 용병 소환이 완성된 것은 아니다.

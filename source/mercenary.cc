@@ -120,3 +120,33 @@ MercenaryShellSearch find_mercenary_shell(const monster *slots,
     return {found ? mercenary_shell_status::UNIQUE
                   : mercenary_shell_status::ABSENT, found};
 }
+
+
+mercenary_bind_status bind_mercenary_shell(monster *slots, std::size_t count,
+                                          std::size_t target,
+                                          const MercenaryRoster &roster,
+                                          merc_id_t id)
+{
+    if (!slots || target >= count || slots[target].type == MONS_NO_MONSTER)
+        return mercenary_bind_status::INVALID_SLOT;
+    const auto *record = roster.find(id);
+    if (!record || record->xl <= 0)
+        return mercenary_bind_status::INVALID_RECORD;
+    if (record->state != mercenary_roster_state::ALIVE)
+        return mercenary_bind_status::NOT_ALIVE;
+    monster &shell = slots[target];
+    if (is_mercenary_monster(shell))
+        return mercenary_bind_status::ALREADY_MARKED;
+    if (find_mercenary_shell(slots, count, id).status
+        != mercenary_shell_status::ABSENT)
+        return mercenary_bind_status::DUPLICATE;
+    for (int slot = 0; slot < NUM_MONSTER_SLOTS; ++slot)
+        if (shell.inv[slot] != NON_ITEM)
+            return mercenary_bind_status::HAS_INVENTORY;
+
+    // All recoverable validation failures leave both shell and record intact.
+    // Equipment belongs to the record; never adopt starting monster items.
+    shell.props[MUHYEOP_MERC_ID_KEY] = int(id);
+    shell.set_hit_dice(record->xl);
+    return mercenary_bind_status::LINKED;
+}

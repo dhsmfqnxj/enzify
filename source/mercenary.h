@@ -119,3 +119,16 @@ struct MercenaryShellSearch
 };
 MercenaryShellSearch find_mercenary_shell(const monster *slots,
                                         std::size_t count, merc_id_t id);
+
+
+// Preparation step only: the caller must validate world-wide deployment and
+// invoke this before equipment/behaviour hooks. No spawning or grid mutation.
+enum class mercenary_bind_status
+{
+    LINKED, INVALID_SLOT, INVALID_RECORD, NOT_ALIVE,
+    ALREADY_MARKED, DUPLICATE, HAS_INVENTORY,
+};
+mercenary_bind_status bind_mercenary_shell(monster *slots, std::size_t count,
+                                          std::size_t target,
+                                          const MercenaryRoster &roster,
+                                          merc_id_t id);

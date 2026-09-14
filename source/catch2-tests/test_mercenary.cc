@@ -180,3 +180,57 @@ TEST_CASE_METHOD(MercenaryLevelFixture, "Mercenary HD bypasses ordinary monster 
         REQUIRE(shell.get_hit_dice() == ordinary_hd[i]);
     }
 }
+
+
+TEST_CASE("Mercenary binding validates before changing a shell",
+          "[muhyeop][mercenary]")
+{
+    MercenaryRoster roster;
+    auto &record = roster.create("Bind", SP_HUMAN, JOB_FIGHTER, 10, 10, 10);
+    record.xl = 17;
+    monster slots[2];
+    slots[0].type = MONS_HUMAN;
+    slots[0].set_hit_dice(3);
+    REQUIRE(bind_mercenary_shell(nullptr, 2, 0, roster, record.id)
+            == mercenary_bind_status::INVALID_SLOT);
+    REQUIRE(bind_mercenary_shell(slots, 2, 2, roster, record.id)
+            == mercenary_bind_status::INVALID_SLOT);
+    REQUIRE(bind_mercenary_shell(slots, 2, 1, roster, record.id)
+            == mercenary_bind_status::INVALID_SLOT);
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, 999)
+            == mercenary_bind_status::INVALID_RECORD);
+    for (auto state : {mercenary_roster_state::DOWNED,
+                       mercenary_roster_state::CARRIED,
+                       mercenary_roster_state::DEAD})
+    {
+        record.state = state;
+        REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+                == mercenary_bind_status::NOT_ALIVE);
+        REQUIRE(record.state == state);
+        REQUIRE_FALSE(is_mercenary_monster(slots[0]));
+        REQUIRE(slots[0].get_experience_level() == 3);
+    }
+    record.state = mercenary_roster_state::ALIVE;
+    slots[1].type = MONS_HUMAN;
+    slots[1].props[MUHYEOP_MERC_ID_KEY] = int(record.id);
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+            == mercenary_bind_status::DUPLICATE);
+    REQUIRE_FALSE(is_mercenary_monster(slots[0]));
+    REQUIRE(slots[1].props[MUHYEOP_MERC_ID_KEY].get_int() == record.id);
+    slots[1].reset();
+    slots[0].inv[MSLOT_WEAPON] = 123;
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+            == mercenary_bind_status::HAS_INVENTORY);
+    REQUIRE(slots[0].inv[MSLOT_WEAPON] == 123);
+    slots[0].inv[MSLOT_WEAPON] = NON_ITEM;
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+            == mercenary_bind_status::LINKED);
+    REQUIRE(lookup_mercenary(slots[0], roster).record == &record);
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+            == mercenary_bind_status::ALREADY_MARKED);
+    // Remove the lookup marker to inspect the actual mirrored HD field.
+    slots[0].props.erase(MUHYEOP_MERC_ID_KEY);
+    REQUIRE(slots[0].get_experience_level() == 17);
+    REQUIRE(record.xl == 17);
+    REQUIRE(roster.size() == 1);
+}
