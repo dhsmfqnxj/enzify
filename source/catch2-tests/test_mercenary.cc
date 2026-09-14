@@ -104,3 +104,49 @@ TEST_CASE("Mercenary shell search rejects bad input and ignores unrelated slots"
     REQUIRE_THROWS_AS(find_mercenary_shell(slots, 3, 0), std::invalid_argument);
     REQUIRE_THROWS_AS(find_mercenary_shell(slots, 3, -1), std::invalid_argument);
 }
+
+
+namespace
+{
+struct MercenaryLevelFixture
+{
+    MercenaryLevelFixture() { reset_mercenaries_for_new_game(); }
+    ~MercenaryLevelFixture() { reset_mercenaries_for_new_game(); }
+};
+}
+
+TEST_CASE_METHOD(MercenaryLevelFixture, "Mercenary level reads the world record",
+                 "[muhyeop][mercenary]")
+{
+    monster shell;
+    shell.set_hit_dice(3);
+    REQUIRE(shell.get_experience_level() == 3);
+    auto &record = mercenary_roster().create("Level", SP_HUMAN, JOB_FIGHTER, 10, 10, 10);
+    record.xl = 17;
+    shell.props[MUHYEOP_MERC_ID_KEY] = int(record.id);
+    REQUIRE(shell.get_experience_level() == 17);
+    shell.set_hit_dice(9);
+    REQUIRE(shell.get_experience_level() == 17);
+    record.xl = 18;
+    REQUIRE(shell.get_experience_level() == 18);
+    record.state = mercenary_roster_state::DOWNED;
+    REQUIRE(shell.get_experience_level() == 18);
+    shell.props.erase(MUHYEOP_MERC_ID_KEY);
+    REQUIRE(shell.get_experience_level() == 9);
+}
+
+TEST_CASE_METHOD(MercenaryLevelFixture, "Broken mercenary level never falls back to shell HD",
+                 "[muhyeop][mercenary]")
+{
+    monster shell;
+    shell.set_hit_dice(9);
+    shell.props[MUHYEOP_MERC_ID_KEY] = "1";
+    REQUIRE_THROWS_AS(shell.get_experience_level(), std::logic_error);
+    shell.props.erase(MUHYEOP_MERC_ID_KEY);
+    shell.props[MUHYEOP_MERC_ID_KEY] = 99;
+    REQUIRE_THROWS_AS(shell.get_experience_level(), std::logic_error);
+    auto &record = mercenary_roster().create("Invalid", SP_HUMAN, JOB_FIGHTER, 10, 10, 10);
+    shell.props[MUHYEOP_MERC_ID_KEY] = int(record.id);
+    record.xl = 0;
+    REQUIRE_THROWS_AS(shell.get_experience_level(), std::logic_error);
+}

@@ -6,6 +6,8 @@
 #include "AppHdr.h"
 
 #include "mon-act.h"
+#include "mercenary.h"
+#include <stdexcept>
 
 #include "act-iter.h"
 #include "areas.h"
@@ -106,6 +108,15 @@ int monster::get_hit_dice() const
  */
 int monster::get_experience_level() const
 {
+    if (is_mercenary_monster(*this))
+    {
+        const auto link = lookup_mercenary(*this, mercenary_roster());
+        if (link.status != mercenary_link_status::LINKED)
+            throw std::logic_error("Broken mercenary identity in level query");
+        if (link.record->xl <= 0)
+            throw std::logic_error("Invalid mercenary level");
+        return link.record->xl;
+    }
     return hit_dice;
 }
 

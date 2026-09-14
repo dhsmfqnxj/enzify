@@ -52,3 +52,20 @@
 - Catch2 회귀 테스트 2개 추가: DOWNED/중복 보존/reset 이후 검색, 잘못된 입력/무관 슬롯.
 - 변경 production/test translation unit C++14+ASSERTS 컴파일 성공.
   전체 실행 검사는 이 코드 커밋의 Actions 결과를 확인할 것. 기존 76개 통과는 이전 코드 결과다.
+
+
+## P1/P2 준비 — 실제 monster XL 조회 연결
+
+- source/mon-act.cc의 monster::get_experience_level()에 용병 분기를 추가했다.
+- marker가 없는 일반 monster는 원본 hit_dice 반환을 유지한다.
+- 용병은 world roster에서 ID를 조회하고 Record.xl을 반환한다.
+- 잘못된 marker/없는 Record/0 이하 XL은 logic_error이며 일반 monster fallback을 하지 않는다.
+- get_hit_dice의 기존 임시 enchantment 보정은 이번 패치에서 변경하지 않았다.
+  get_experience_level을 부르므로 그 기본값은 이제 Record XL이다.
+- raw hit_dice 미러 동기화, 용병 전용 drain 정책, 실제 skill/장비/전투 공식 연결은 미완료.
+- 신규 테스트 2개: 일반 monster 유지, Record XL 실시간 반영, shell HD 독립성,
+  DOWNED 조회, marker 제거 시 원본 경로, 잘못된 ID/Record/XL 오류.
+- mon-act.cc와 test_mercenary.cc의 C++14 ASSERTS 컴파일 성공.
+- 전체 엔진 테스트 실행은 이 최신 커밋의 Actions에서 확인해야 한다.
+- 실제 spawn이 노출되기 전, 오류가 gameplay 도중 발생하지 않도록 생성/불러오기
+  경계에서 identity를 검증하고 실패 처리를 연결해야 한다. 현재 완성 플레이 기능이 아니다.
