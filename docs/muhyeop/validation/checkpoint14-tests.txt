@@ -1,0 +1,22 @@
+Linux full production build: PASS (exit 0; LINK crawl)
+
+Focused regression:
+Filters: [muhyeop]
+Randomness seeded to: 3052830549
+===============================================================================
+All tests passed (377935 assertions in 28 test cases)
+
+
+Full Catch2:
+fatal: No names found, cannot describe anything.
+make -C rltiles all ARCH=x86_64-linux-gnu NO_PKGCONFIG=YesPlease TILES=
+make[1]: Entering directory '/workspace/scratch/e3475e45cb96/enzify-bind-fix/source/rltiles'
+make[1]: Leaving directory '/workspace/scratch/e3475e45cb96/enzify-bind-fix/source/rltiles'
+    PYTHON config.h
+    GEN species-type.h
+    GEN job-type.h
+    PYTHON rltilesstatus-icon-sizes.h
+./catch2-tests-executable
+Randomness seeded to: 1748702163
+===============================================================================
+All tests passed (387199 assertions in 89 test cases)

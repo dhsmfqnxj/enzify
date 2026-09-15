@@ -15,6 +15,7 @@
 #include "item-use.h"
 #include "jobs.h"
 #include "message.h"
+#include "mercenary.h"
 #include "mutation.h"
 #include "ng-init.h"
 #include "ng-wanderer.h"
@@ -373,6 +374,8 @@ static void _setup_generic(const newgame_def& ng,
 void setup_game(const newgame_def& ng,
                 bool normal_dungeon_setup /*for catch2-tests */)
 {
+    // A new world, not a new protagonist in the same Muhyeop family.
+    reset_mercenaries_for_new_game();
     crawl_state.type = ng.type; // by default
     if (Options.seed_from_rc && ng.type != GAME_TYPE_CUSTOM_SEED)
     {

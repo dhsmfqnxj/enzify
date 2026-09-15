@@ -4,6 +4,7 @@
 **/
 
 #include "AppHdr.h"
+#include "mercenary.h"
 
 #include "mon-place.h"
 #include "mgen-data.h"
@@ -967,6 +968,15 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
     mon->type         = mg.cls;
     mon->base_monster = mg.base_type;
     mon->xp_tracking  = mg.xp_tracking;
+    if (mg.mercenary_id()
+        && bind_mercenary_shell(&env.mons[0], MAX_MONSTERS, mon->mindex(),
+                                mg.mercenary_id()) != mercenary_bind_status::LINKED)
+    {
+        env.mid_cache.erase(mon->mid);
+        mon->reset();
+        return nullptr;
+    }
+
 
     // Pick the correct Serpent of Hell.
     if (mon->type == MONS_SERPENT_OF_HELL)
@@ -1235,7 +1245,8 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
 
         mon->colour = wpn->get_colour();
     }
-    else if (mons_class_itemuse(mg.cls) >= MONUSE_STARTING_EQUIPMENT
+    else if (!mg.mercenary_id()
+             && mons_class_itemuse(mg.cls) >= MONUSE_STARTING_EQUIPMENT
              && !mg.props.exists(KIKU_WRETCH_KEY))
     {
         give_item(mon, place.absdepth(), mg.is_summoned());
@@ -1542,8 +1553,10 @@ static monster* _place_monster_aux(const mgen_data &mg, const monster *leader,
     }
 
     mon->origin_level = level_id::current();
+    if (mg.mercenary_id())
+        mon->hit_points = mg.mercenary_hp();
 
-    if (mg.behaviour > NUM_BEHAVIOURS)
+    if (!mg.mercenary_id() && mg.behaviour > NUM_BEHAVIOURS)
     {
         if (!(mg.flags & MG_FORCE_BEH) && !crawl_state.game_is_arena())
             check_lovelessness(*mon);

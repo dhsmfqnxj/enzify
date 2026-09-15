@@ -23,6 +23,14 @@
 // A structure with all the data needed to whip up a new monster.
 struct mgen_data
 {
+private:
+    int32_t _mercenary_id = 0;
+    int _mercenary_hp = 0;
+    friend monster *create_mercenary_shell(int32_t, const coord_def &, int, int);
+public:
+    int32_t mercenary_id() const { return _mercenary_id; }
+    int mercenary_hp() const { return _mercenary_hp; }
+
     // Monster type.
     monster_type    cls;
 

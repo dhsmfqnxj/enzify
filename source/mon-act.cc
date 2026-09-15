@@ -6,6 +6,8 @@
 #include "AppHdr.h"
 
 #include "mon-act.h"
+#include "mercenary.h"
+#include <stdexcept>
 
 #include "act-iter.h"
 #include "areas.h"
@@ -85,6 +87,10 @@ static bool _do_move_monster(monster& mons, const coord_def& delta);
  */
 int monster::get_hit_dice() const
 {
+    // Mercenary HD is only an engine compatibility view of Record XL.
+    if (is_mercenary_monster(*this))
+        return get_experience_level();
+
     const int base_hd = get_experience_level();
 
     const mon_enchant drain_ench = get_ench(ENCH_DRAINED);
@@ -106,6 +112,15 @@ int monster::get_hit_dice() const
  */
 int monster::get_experience_level() const
 {
+    if (is_mercenary_monster(*this))
+    {
+        const auto link = lookup_mercenary(*this, mercenary_roster());
+        if (link.status != mercenary_link_status::LINKED)
+            throw std::logic_error("Broken mercenary identity in level query");
+        if (link.record->xl <= 0)
+            throw std::logic_error("Invalid mercenary level");
+        return link.record->xl;
+    }
     return hit_dice;
 }
 
