@@ -132,7 +132,8 @@ TEST_CASE_METHOD(MercenaryLevelFixture, "Mercenary level reads the world record"
     record.state = mercenary_roster_state::DOWNED;
     REQUIRE(shell.get_experience_level() == 18);
     shell.props.erase(MUHYEOP_MERC_ID_KEY);
-    REQUIRE(shell.get_experience_level() == 9);
+    // The attempted HD=9 write was replaced with Record XL=17.
+    REQUIRE(shell.get_experience_level() == 17);
 }
 
 TEST_CASE_METHOD(MercenaryLevelFixture, "Broken mercenary level never falls back to shell HD",
@@ -182,29 +183,29 @@ TEST_CASE_METHOD(MercenaryLevelFixture, "Mercenary HD bypasses ordinary monster 
 }
 
 
-TEST_CASE("Mercenary binding validates before changing a shell",
+TEST_CASE_METHOD(MercenaryLevelFixture, "Mercenary binding validates before changing a shell",
           "[muhyeop][mercenary]")
 {
-    MercenaryRoster roster;
+    auto &roster = mercenary_roster();
     auto &record = roster.create("Bind", SP_HUMAN, JOB_FIGHTER, 10, 10, 10);
     record.xl = 17;
     monster slots[2];
     slots[0].type = MONS_HUMAN;
     slots[0].set_hit_dice(3);
-    REQUIRE(bind_mercenary_shell(nullptr, 2, 0, roster, record.id)
+    REQUIRE(bind_mercenary_shell(nullptr, 2, 0, record.id)
             == mercenary_bind_status::INVALID_SLOT);
-    REQUIRE(bind_mercenary_shell(slots, 2, 2, roster, record.id)
+    REQUIRE(bind_mercenary_shell(slots, 2, 2, record.id)
             == mercenary_bind_status::INVALID_SLOT);
-    REQUIRE(bind_mercenary_shell(slots, 2, 1, roster, record.id)
+    REQUIRE(bind_mercenary_shell(slots, 2, 1, record.id)
             == mercenary_bind_status::INVALID_SLOT);
-    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, 999)
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, 999)
             == mercenary_bind_status::INVALID_RECORD);
     for (auto state : {mercenary_roster_state::DOWNED,
                        mercenary_roster_state::CARRIED,
                        mercenary_roster_state::DEAD})
     {
         record.state = state;
-        REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+        REQUIRE(bind_mercenary_shell(slots, 2, 0, record.id)
                 == mercenary_bind_status::NOT_ALIVE);
         REQUIRE(record.state == state);
         REQUIRE_FALSE(is_mercenary_monster(slots[0]));
@@ -213,24 +214,47 @@ TEST_CASE("Mercenary binding validates before changing a shell",
     record.state = mercenary_roster_state::ALIVE;
     slots[1].type = MONS_HUMAN;
     slots[1].props[MUHYEOP_MERC_ID_KEY] = int(record.id);
-    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, record.id)
             == mercenary_bind_status::DUPLICATE);
     REQUIRE_FALSE(is_mercenary_monster(slots[0]));
     REQUIRE(slots[1].props[MUHYEOP_MERC_ID_KEY].get_int() == record.id);
     slots[1].reset();
     slots[0].inv[MSLOT_WEAPON] = 123;
-    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, record.id)
             == mercenary_bind_status::HAS_INVENTORY);
     REQUIRE(slots[0].inv[MSLOT_WEAPON] == 123);
     slots[0].inv[MSLOT_WEAPON] = NON_ITEM;
-    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, record.id)
             == mercenary_bind_status::LINKED);
     REQUIRE(lookup_mercenary(slots[0], roster).record == &record);
-    REQUIRE(bind_mercenary_shell(slots, 2, 0, roster, record.id)
+    REQUIRE(slots[0].get_experience_level() == 17);
+    REQUIRE(slots[0].get_hit_dice() == 17);
+    REQUIRE(bind_mercenary_shell(slots, 2, 0, record.id)
             == mercenary_bind_status::ALREADY_MARKED);
     // Remove the lookup marker to inspect the actual mirrored HD field.
     slots[0].props.erase(MUHYEOP_MERC_ID_KEY);
     REQUIRE(slots[0].get_experience_level() == 17);
     REQUIRE(record.xl == 17);
     REQUIRE(roster.size() == 1);
+}
+
+
+TEST_CASE_METHOD(MercenaryLevelFixture, "A foreign roster cannot authorize shell binding",
+                 "[muhyeop][mercenary]")
+{
+    MercenaryRoster foreign;
+    auto &foreign_record = foreign.create("Foreign", SP_HUMAN, JOB_FIGHTER, 1, 1, 1);
+    foreign_record.xl = 27;
+    monster shell;
+    shell.type = MONS_HUMAN;
+    REQUIRE(bind_mercenary_shell(&shell, 1, 0, foreign_record.id)
+            == mercenary_bind_status::INVALID_RECORD);
+    REQUIRE_FALSE(is_mercenary_monster(shell));
+    auto &world = mercenary_roster().create("World", SP_HUMAN, JOB_FIGHTER, 10, 10, 10);
+    REQUIRE(world.id == foreign_record.id);
+    world.xl = 7;
+    REQUIRE(bind_mercenary_shell(&shell, 1, 0, world.id) == mercenary_bind_status::LINKED);
+    REQUIRE(shell.get_experience_level() == 7);
+    REQUIRE(shell.get_hit_dice() == 7);
+    REQUIRE(lookup_mercenary(shell, mercenary_roster()).record == &world);
 }

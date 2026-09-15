@@ -4,6 +4,7 @@
 **/
 
 #include "AppHdr.h"
+#include "mercenary.h"
 
 #include "mon-clone.h"
 
@@ -53,7 +54,8 @@ static bool _monster_clone_exists(monster* mons)
 
 static bool _mons_is_illusion_cloneable(monster* mons)
 {
-    return !mons->is_peripheral()
+    return !is_mercenary_monster(*mons)
+           && !mons->is_peripheral()
            && mons->type != MONS_BOUNDLESS_TESSERACT
            && !mons->is_illusion()
            && !_monster_clone_exists(mons);
@@ -243,7 +245,7 @@ bool mons_clonable(const monster* mon, bool needs_adjacent)
     // No uniques or inugami. Also, figuring out the name for the clone
     // of a named monster isn't worth it, and duplicate battlespheres
     // with the same owner cause problems with the spell.
-    if (mons_is_unique(mon->type)
+    if (is_mercenary_monster(*mon) || mons_is_unique(mon->type)
         || mon->type == MONS_INUGAMI
         || mon->is_named()
         || mon->is_peripheral())
@@ -295,6 +297,11 @@ monster* clone_mons(const monster* orig, bool quiet, bool* obvious)
 monster* clone_mons(const monster* orig, bool quiet, bool* obvious,
                     mon_attitude_type mon_att, coord_def place)
 {
+    // A copied stable ID would create a second actor for one world record.
+    // Mercenary illusion/proxy identities are not implemented yet.
+    if (is_mercenary_monster(*orig))
+        return nullptr;
+
     // Is there an open slot in env.mons?
     monster* mons = get_free_monster();
     coord_def pos(0, 0);

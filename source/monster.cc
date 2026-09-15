@@ -4,6 +4,7 @@
 **/
 
 #include "AppHdr.h"
+#include "mercenary.h"
 
 #include <cmath>
 #include <algorithm>
@@ -190,6 +191,8 @@ void monster::init_with(const monster& mon)
     base_monster      = mon.base_monster;
     hit_points        = mon.hit_points;
     max_hit_points    = mon.max_hit_points;
+    // Transit/companion deserialization copies shells before the world roster
+    // is loaded. Copy the inert wire cache; gameplay getters resolve Record XL.
     hit_dice          = mon.hit_dice;
     speed             = mon.speed;
     speed_increment   = mon.speed_increment;
@@ -2589,7 +2592,7 @@ int monster::mindex() const
  */
 void monster::set_hit_dice(int new_hit_dice)
 {
-    hit_dice = new_hit_dice;
+    hit_dice = is_mercenary_monster(*this) ? get_experience_level() : new_hit_dice;
 
     // XXX: this is unbelievably hacky to preserve old behaviour
     if (type == MONS_OKLOB_PLANT && !spells.empty()
@@ -4549,7 +4552,7 @@ void monster::uglything_init(bool only_mutate)
     // dice and maximum and current hit points as they are.
     if (!only_mutate)
     {
-        hit_dice        = ghost->xl;
+        hit_dice = is_mercenary_monster(*this) ? get_experience_level() : ghost->xl;
         max_hit_points  = ghost->max_hp;
         hit_points      = max_hit_points;
     }
@@ -4561,7 +4564,8 @@ void monster::uglything_init(bool only_mutate)
 
 void monster::ghost_demon_init()
 {
-    hit_dice        = max<short int>(ghost->xl, 1);
+    hit_dice = is_mercenary_monster(*this) ? get_experience_level()
+                                        : max<short int>(ghost->xl, 1);
     max_hit_points  = max<short int>(1, min<short int>(ghost->max_hp, MAX_MONSTER_HP));
     hit_points      = max_hit_points;
     speed           = ghost->speed;

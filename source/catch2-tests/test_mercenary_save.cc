@@ -48,7 +48,7 @@ vector<unsigned char> wire_records(const vector<WireRecord> &rows,
 {
     vector<unsigned char> bytes;
     writer out(&bytes);
-    marshallInt(out, 0x4d485231);
+    marshallInt(out, 0x4d485232);
     marshallUnsigned(out, next_id);
     marshallInt(out, rows.size());
     marshallShort(out, skill_count);
@@ -66,6 +66,7 @@ vector<unsigned char> wire_records(const vector<WireRecord> &rows,
         marshallUByte(out, r.state);
         for (int i = 0; i < skill_count; ++i)
             marshallUByte(out, r.skill);
+        marshallUByte(out, 0);
     }
     return bytes;
 }
@@ -222,7 +223,7 @@ TEST_CASE("Negative counts and name lengths are rejected in the save reader",
     {
         vector<unsigned char> bytes;
         writer out(&bytes);
-        marshallInt(out, 0x4d485231);
+        marshallInt(out, 0x4d485232);
         marshallUnsigned(out, 2);
         marshallInt(out, negative_count ? -1 : 1);
         marshallShort(out, NUM_SKILLS);
@@ -271,4 +272,21 @@ TEST_CASE_METHOD(WorldRosterFixture, "Actual new-game setup starts an empty worl
     mercenary_roster().create("Previous world", SP_HUMAN, JOB_FIGHTER, 10, 10, 10);
     MockPlayerYouTestsFixture new_game;
     REQUIRE(mercenary_roster().size() == 0);
+}
+
+
+TEST_CASE("MHR1 migrates to undeployed and MHR2 rejects invalid deployment flags",
+          "[muhyeop][save]")
+{
+    auto bytes = wire_records({WireRecord()});
+    bytes.back() = 2;
+    MercenaryRoster roster;
+    reader invalid(bytes);
+    REQUIRE_THROWS_AS(roster.load(invalid), corrupted_save);
+    bytes.pop_back();
+    bytes[3] = 0x31;
+    reader old(bytes);
+    roster.load(old);
+    REQUIRE_FALSE(roster.find(1)->deployed);
+    REQUIRE(roster.find(1)->xl == 7);
 }

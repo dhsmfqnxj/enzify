@@ -105,3 +105,8 @@ https://github.com/dhsmfqnxj/enzify/actions/runs/34792860642
 호출자는 원본 define_monster 등 초기화를 마친 뒤, 장비/행동 처리 전에 실행해야 한다.
 메모리 할당 예외까지 포함한 전체 spawn transaction, 실제 장비/HP 수명 및 레벨업 시
 HD 갱신은 후속 구현이며, 지금 플레이 가능한 용병 소환이 완성된 것은 아니다.
+
+
+## Checkpoint14 재개
+
+최신 구현/복구 기준은 checkpoint14-placement.md를 먼저 읽는다. 기존 로컬 변경에서 이어서 world roster 단일 bind, 실제 human shell 생성, 영속 배치 예약 및 clone 차단을 연결했다. 이전의 define_monster 이후 bind 지시는 폐기하며, 실제 연결은 define_monster 이전이다. PR #1 작업 브랜치를 유지하고 main에 병합하지 않는다.

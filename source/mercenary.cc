@@ -124,12 +124,11 @@ MercenaryShellSearch find_mercenary_shell(const monster *slots,
 
 mercenary_bind_status bind_mercenary_shell(monster *slots, std::size_t count,
                                           std::size_t target,
-                                          const MercenaryRoster &roster,
                                           merc_id_t id)
 {
     if (!slots || target >= count || slots[target].type == MONS_NO_MONSTER)
         return mercenary_bind_status::INVALID_SLOT;
-    const auto *record = roster.find(id);
+    const auto *record = mercenary_roster().find(id);
     if (!record || record->xl <= 0)
         return mercenary_bind_status::INVALID_RECORD;
     if (record->state != mercenary_roster_state::ALIVE)

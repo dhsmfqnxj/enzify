@@ -9,8 +9,8 @@
 
 namespace
 {
-// MHR1. A later equipment/martial schema must explicitly handle older data.
-const int32_t ROSTER_SCHEMA = 0x4d485231;
+// MHR2 adds the persistent deployment reservation; MHR1 remains readable.
+const int32_t ROSTER_SCHEMA = 0x4d485232;
 const uint64_t EXHAUSTED_ID = uint64_t(std::numeric_limits<merc_id_t>::max()) + 1;
 
 void check(bool valid, const char *message)
@@ -78,12 +78,15 @@ void MercenaryRoster::save(writer &out) const
         marshallUByte(out, static_cast<uint8_t>(rec.state));
         for (int sk = 0; sk < NUM_SKILLS; ++sk)
             marshallUByte(out, rec.skill(static_cast<skill_type>(sk)));
+        marshallUByte(out, rec.deployed ? 1 : 0);
     }
 }
 
 void MercenaryRoster::load(reader &in)
 {
-    check(unmarshallInt(in) == ROSTER_SCHEMA, "Unsupported mercenary roster schema");
+    const int32_t schema = unmarshallInt(in);
+    check(schema == ROSTER_SCHEMA || schema == 0x4d485231,
+          "Unsupported mercenary roster schema");
     const uint64_t next_id = unmarshallUnsigned(in);
     check(next_id >= 1 && next_id <= EXHAUSTED_ID, "Invalid mercenary next ID");
     const int count = unmarshallInt(in);
@@ -120,6 +123,12 @@ void MercenaryRoster::load(reader &in)
         for (int sk = 0; sk < skill_count; ++sk)
             check(rec->set_skill(static_cast<skill_type>(sk), unmarshallUByte(in)),
                   "Invalid mercenary skill level");
+        if (schema == ROSTER_SCHEMA)
+        {
+            const int deployed = unmarshallUByte(in);
+            check(deployed <= 1, "Invalid mercenary deployment flag");
+            rec->deployed = deployed != 0;
+        }
         validate_record(*rec);
         pending.records_.emplace(id, std::move(rec));
     }

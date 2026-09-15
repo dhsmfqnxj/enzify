@@ -1,6 +1,6 @@
 /**
  * @file
- * @brief Muhyeop mercenary record foundation (no live spawning yet).
+ * @brief Muhyeop mercenary records and controlled engine shell placement.
  */
 #pragma once
 
@@ -28,7 +28,7 @@ enum class mercenary_roster_state : uint8_t
     DEAD = 3,
 };
 
-// Record schema 1: equipment and martial arts are subsequent patches.
+// Record schema 2: equipment and martial arts are subsequent patches.
 // Do not spawn a playable mercenary until those paths are connected.
 struct MercenaryRecord
 {
@@ -41,6 +41,8 @@ struct MercenaryRecord
     job_type background;
     int xl = 1;
     int xp = 0;
+    // Persistent reservation: remains set while a shell is on an unloaded level.
+    bool deployed = false;
     int base_str;
     int base_int;
     int base_dex;
@@ -130,5 +132,13 @@ enum class mercenary_bind_status
 };
 mercenary_bind_status bind_mercenary_shell(monster *slots, std::size_t count,
                                           std::size_t target,
-                                          const MercenaryRoster &roster,
                                           merc_id_t id);
+
+
+class coord_def;
+// Engine placement API. HP must come from the caller's validated final stats /
+// expedition snapshot. Initial implementation supports a friendly human shell.
+monster *create_mercenary_shell(merc_id_t id, const coord_def &pos,
+                               int current_hp, int max_hp);
+bool remove_mercenary_shell(merc_id_t id);
+bool mercenary_has_offlevel_copy(merc_id_t id);

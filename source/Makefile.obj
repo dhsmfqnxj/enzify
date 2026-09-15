@@ -143,6 +143,7 @@ maybe-bool.o \
 melee-attack.o \
 mercenary.o \
 mercenary-save.o \
+mercenary-place.o \
 menu.o \
 message-stream.o \
 message.o \
@@ -320,6 +321,7 @@ catch2-tests/test_attack-delay.o \
 catch2-tests/test_mercenary.o \
 catch2-tests/test_mercenary_record.o \
 catch2-tests/test_mercenary_save.o \
+catch2-tests/test_mercenary_place.o \
 catch2-tests/test_mon-util.o \
 catch2-tests/test_ng-init-branches.o \
 catch2-tests/test_player.o \
